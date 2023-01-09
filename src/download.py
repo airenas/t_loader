@@ -50,15 +50,16 @@ def main(argv):
     loader = Loader(args.url, user=args.user, domain=args.domain, password=args.password)
 
     ids = loader.get_list()
-    print(ids)
-
+    print("got %d docs ids" % len(ids))
+    print("out dir: %s" % args.out_dir)
+    print("worker count: %d" % args.n)
     jobs = []
     for id in ids:
         jobs.append(Work(id))
 
     job_queue = queue.Queue(maxsize=10)
     workers = []
-    wc = 1
+    wc = args.n
 
     def add_jobs():
         for _j in jobs:

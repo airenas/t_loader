@@ -14,7 +14,6 @@ install/req:
 	pip install -r requirements.txt
 ############################################
 ${work_dir}/.done: | ${work_dir}
-	echo '$(pass)'
 	$(python_cmd) src/download.py --url $(url) --out_dir ${work_dir} --user ${user} --password ${pass} --domain ${domain} --n ${n}
 	touch $@
 dwn: ${work_dir}/.done	
