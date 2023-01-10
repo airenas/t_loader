@@ -7,7 +7,7 @@ from os.path import exists
 
 from tqdm import tqdm
 
-from src.loader import Loader
+from src.loader import Loader, Cfg
 
 
 class Work:
@@ -47,9 +47,10 @@ def main(argv):
     parser.add_argument("--n", type=int, nargs='?', default=1, help="Workers count")
     args = parser.parse_args(args=argv)
 
-    loader = Loader(args.url, user=args.user, domain=args.domain, password=args.password)
+    cfg = Cfg(args.url, user=args.user, domain=args.domain, password=args.password)
 
-    ids = loader.get_list()
+    print("loading ids...")
+    ids = Loader(cfg=cfg).get_list()
     print("got %d docs ids" % len(ids))
     print("out dir: %s" % args.out_dir)
     print("worker count: %d" % args.n)
@@ -79,7 +80,7 @@ def main(argv):
             _j = job_queue.get()
             if _j is None:
                 return
-            _j.do(loader, args.out_dir)
+            _j.do(Loader(cfg=cfg), args.out_dir)
 
     for i in range(wc):
         start_thread(start)
