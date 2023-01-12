@@ -14,7 +14,6 @@ class Work:
     def __init__(self, file: str):
         self.file = file
         self.wait_queue = queue.Queue(maxsize=1)
-        self.err = 0
 
     def done(self):
         return self.wait_queue.put(self, block=False)
@@ -37,7 +36,6 @@ class Work:
                 f.write(str)
         except BaseException as err:
             print("error {}".format(err))
-            self.err += 1
             return False
         finally:
             self.done()
@@ -96,14 +94,17 @@ def main(argv):
 
     def start():
         nonlocal err_count
+        local_err_count = 0
         while True:
             _j = job_queue.get()
             if _j is None:
                 return
             if not _j.do(Loader(cfg=cfg), os.path.join(args.out_dir, "corpus", args.court)):
+                local_err_count += 1
                 with err_lock:
                     err_count += 1
-            if _j.err > 3:
+
+            if local_err_count > 2:
                 print("too many errors exit worker")
                 break
 
