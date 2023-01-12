@@ -55,18 +55,18 @@ class Loader:
         self.__cfg = cfg
         self.__http_client = init_client(self.__cfg)
 
-    def get_list(self, ):
+    def get_list(self, court):
         reqxml = '''<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/">
    <soap:Header/>
    <soap:Body>
       <tem:GetList>
          <tem:ts></tem:ts>
-         <tem:teismas>00000013-e5a4-4275-b71d-40a1ab5dfb22</tem:teismas>
+         <tem:teismas>%s</tem:teismas>
          <!-- <tem:teismoRumai></tem:teismoRumai> -->
       </tem:GetList>
    </soap:Body>
 </soap:Envelope>
-'''
+''' % court
         r = self.__http_client.post(self.__cfg.url, auth=self.__cfg.get_auth(), data=reqxml,
                                     timeout=30, headers=get_header("GetList"))
         r.raise_for_status()

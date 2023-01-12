@@ -7,6 +7,7 @@ python_cmd=PYTHONPATH=./ LOG_LEVEL=INFO python
 n?=10
 version?=0.1
 final_file=$(CURDIR)/nta-$(version)-$(shell date +'%y-%m-%d_%H-%M').zip
+courts_done_files=$(patsubst %,$(work_dir)/%/.done, $(courts))
 ############################################
 ${work_dir}:
 	mkdir -p $@	
@@ -15,8 +16,12 @@ install/req:
 	# conda create --name tl python=3.10
 	pip install -r requirements.txt
 ############################################
-${work_dir}/.done: | ${work_dir}
-	$(python_cmd) src/download.py --url $(url) --out_dir ${work_dir} --user ${user} --password ${pass} --domain ${domain} --n ${n}
+${work_dir}/.done: $(courts_done_files) | ${work_dir}
+	touch $@
+${work_dir}/%/.done: 
+	mkdir -p $(work_dir)/$*/
+	$(python_cmd) src/download.py --url $(url) --out_dir ${work_dir}/$* --user ${user} --password ${pass} --domain ${domain} --n ${n} \
+		--court $*
 	touch $@
 dwn: ${work_dir}/.done	
 ############################################
@@ -25,6 +30,10 @@ $(final_file): $(work_dir)/.done $(work_dir)/info.txt
 	cd $(work_dir); zip -r $@ *
 zip: $(final_file)	
 	echo "Final file is: $(final_file)"
+############################################
+debug:
+	echo "$(courts)"
+	echo "$(courts_done_files)"
 ############################################
 $(work_dir)/info.txt: $(work_dir)/.done
 	@printf "NTA texts\n----------------\n" > $@

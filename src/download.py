@@ -41,6 +41,7 @@ def main(argv):
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--url", nargs='?', required=True, help="Service URL")
     parser.add_argument("--out_dir", nargs='?', required=True, help="Output directory")
+    parser.add_argument("--court", nargs='?', required=True, help="Court ID")
     parser.add_argument("--user", nargs='?', required=True, help="User")
     parser.add_argument("--password", nargs='?', required=True, help="Pass")
     parser.add_argument("--domain", nargs='?', required=True, help="Domain")
@@ -49,8 +50,9 @@ def main(argv):
 
     cfg = Cfg(args.url, user=args.user, domain=args.domain, password=args.password)
 
+    print("court ID: %s" % args.court)
     print("loading ids...")
-    ids = Loader(cfg=cfg).get_list()
+    ids = Loader(cfg=cfg).get_list(args.court)
     print("got %d docs ids" % len(ids))
     print("out dir: %s" % args.out_dir)
     print("worker count: %d" % args.n)
