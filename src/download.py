@@ -23,7 +23,10 @@ class Work:
 
     def do(self, loader: Loader, dir):
         try:
-            file = os.path.join(dir, self.file + ".xml")
+            n_dir = os.path.join(dir, self.file[0])
+            if not exists(n_dir):
+                os.makedirs(n_dir, exist_ok=True)
+            file = os.path.join(n_dir, self.file + ".xml")
             if exists(file):
                 file_stats = os.stat(file)
                 if file_stats and file_stats.st_size > 0:
